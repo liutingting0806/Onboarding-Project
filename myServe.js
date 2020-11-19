@@ -18,7 +18,7 @@ app.all('*', function (req, res, next) {
 
   res.header('Content-Type', 'application/json;charset=utf-8');
   frontData = req.query;
-  console.log(frontData)
+  // console.log(frontData)
 
   next()
 
@@ -36,7 +36,7 @@ app.get(api, (req, res) => {
         database : 'test_ltt'
       });
     connection.connect();
-    console.log(frontData.user_name,frontData.skill_name,frontData.position)
+    // console.log(frontData.user_name,frontData.skill_name,frontData.position)
     connection.query(`SELECT
 	c.*,
 	we.comp_name,
@@ -65,7 +65,7 @@ WHERE
    
     res.send(data);
     
-    console.log('The solution is: ', rows);
+    // console.log('The solution is: ', rows);
     }); 
     connection.end();   
 });
@@ -86,7 +86,7 @@ app.get(skillApi, (req, res) => {
    
     res.send(data);
     
-    console.log('The solution is: ', rows);
+    // console.log('The solution is: ', rows);
     }); 
     connection.end();   
 });

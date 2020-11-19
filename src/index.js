@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import './App.css'
 import { Input,  Row, Col, Label,ListGroup, ListGroupItem, ListGroupItemText, Card, CardBody, CardTitle, CardSubtitle,} from 'reactstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios'; // 引入axios库
@@ -69,7 +68,7 @@ function CardData (props){
               <CardSubtitle tag="h6" className="mb-2 text-muted">Address: {data.address}</CardSubtitle>
               <CardSubtitle tag="h6" className="mb-2 text-muted">Skills: {data.skill_name}</CardSubtitle>
               {/* <CardText> */}
-                <p>Position: {data.position}</p>
+                <p>Job Titles: {data.position}</p>
                 <p>Express: {data.explain}</p>
               {/* </CardText> */}
             </CardBody>
@@ -86,7 +85,6 @@ function SkillOption(props){
   return null
 }
 function JobOption(props){
-  console.log('job------',props);
   if(props.listData.length !== 0 ){
     return props.listData.map((data) =>
       <option key={data.id} value={data.job_name}>{data.job_name}</option>
@@ -97,7 +95,7 @@ function JobOption(props){
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {inputValue: '',titleSelectValue:'', killsSelectValue:'', filterValue:'', listItems:[],skillItems:[],jobItems:[],currentIndex:''};
+    this.state = {inputValue: '',titleSelectValue:'', killsSelectValue:'', filterValue:'', listItems:[],skillItems:[],jobItems:[],currentIndex:'0',loading:false};
     this.handleChange = this.handleChange.bind(this);
     this.baseUrl = 'http://localhost:8000/api/user';
     this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -113,27 +111,29 @@ class Board extends React.Component {
       this.setState({inputValue: target.value});
     }else if(typeMap.get(target.name) === 'position'){
       this.setState({titleSelectValue: target.value});
+      this.setState({loading:true});
       this.search(typeMap.get(target.name),target.value)
     }else{
       this.setState({killsSelectValue: target.value});
+      this.setState({loading:true});
       this.search(typeMap.get(target.name),target.value)
     }
     
   }
   handleKeyDown(e){
     if (e.keyCode === 13) {
+      this.setState({loading:true});
       this.search('user_name',e.target.value)
 		}
   }
   handleNavClick(e){
     e.preventDefault();
-    console.log(e);
+    // console.log(e);
     this.setState({currentIndex:e.target.name});
+    this.setState({loading:true});
     this.searchData('type',e.target.name);
   }
   search(type,val){
-    console.log(type)
-    console.log(val);
     this.searchData(type,val);
     
   }
@@ -165,9 +165,10 @@ class Board extends React.Component {
     };
     axios.get(`${this.baseUrl}/getUser`,{params})
       .then(res => {
-        console.log(res);
+        // console.log(res);
         let goodlists = res.data;
         if(goodlists){
+          this.setState({loading: false});
           this.setState({listItems: res.data});
         }
       })
@@ -178,7 +179,7 @@ class Board extends React.Component {
   getSkillList(){
     axios.get(`${this.baseUrl}/getSkill`)
     .then(res => {
-      console.log(res);
+      // console.log(res);
       let goodlists = res.data;
       goodlists.unshift({id:0,skill_name:''})
       if(goodlists){
@@ -192,9 +193,9 @@ class Board extends React.Component {
   getJobList(){
     axios.get(`${this.baseUrl}/getJobs`)
     .then(res => {
-      console.log(res);
+      // console.log(res);
       let goodlists = res.data;
-      goodlists.unshift({id:0,job_name:'NONE'})
+      goodlists.unshift({id:0,job_name:''})
       if(goodlists){
         this.setState({jobItems: res.data});
       }
@@ -208,7 +209,6 @@ class Board extends React.Component {
     // 使用axios完成ajax数据请求
    this.getSkillList();
    this.getJobList();
-
   }
   render() {
     return (
@@ -332,7 +332,19 @@ class Board extends React.Component {
                 <button className="nav-link" className={`nav-link ${'3'===this.state.currentIndex?"active":''}`} name="3" onClick={this.handleNavClick}>Offer</button>
               </li>
             </ul>
-            <ul className="content-list-scroll"><CardData listData={this.state.listItems} /></ul>
+            <ul className="content-list-scroll">
+              {
+                this.state.loading
+                 ?<div style={{height: '100%',display: 'flex',alignItems: 'center',justifyContent: 'center'}}>  
+                    <div className="pswp__preloader__icn">
+                      <div className="pswp__preloader__cut">
+                        <div className="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                  </div>
+                :<CardData listData={this.state.listItems} />
+              }
+              </ul>
           </div>
         </Col>
       </Row>

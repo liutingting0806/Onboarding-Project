@@ -24,20 +24,20 @@ var jsonWrite = function(res, ret) {
 // 查询用户接口
 router.use('/getUser', (req, res) => {
     var sql = '';
-    console.log('req       '+req.query.type);
+    // console.log('req       '+req.query.type);
     let params = req.query
     let type=params.type
     if(type==='0'){
-        console.log('req0       '+req.query.type);
+        // console.log('req0       '+req.query.type);
         sql = $sql.user.getUserList0;
     }else{
-        console.log('req1       '+req.query.type);
+        // console.log('req1       '+req.query.type);
         sql = $sql.user.getUserList1;
     }
     pool.query(sql, [1,type,params.user_name,params.skill_name,params.position], function(error, results, fields) {
         // pool.query(sql, ['','',''], function(error, results, fields) {
             if (error) throw error;
-            console.log(results);
+            // console.log(results);
             if (results) {
                 res.send(results);
                 // console.log('result......'+results)
@@ -53,9 +53,9 @@ router.use('/getSkill', (req, res) => {
     pool.query(sql, function(error, results, fields) {
     // pool.query(sql, ['','',''], function(error, results, fields) {
         if (error) throw error;
-        console.log(results);
+        // console.log(results);
         if (results) {
-            res.send(results);
+            // res.send(results);
             // console.log('result......'+results)
             // jsonWrite(res, results);
         }
@@ -68,7 +68,7 @@ router.use('/getJobs', (req, res) => {
     pool.query(sql, function(error, results, fields) {
     // pool.query(sql, ['','',''], function(error, results, fields) {
         if (error) throw error;
-        console.log(results);
+        // console.log(results);
         if (results) {
             res.send(results);
             // console.log('result......'+results)
